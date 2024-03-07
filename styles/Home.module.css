@@ -1,4 +1,4 @@
-.wallet { 
+.wallet {
   display: flex;
   padding: 3rem;
   flex-direction: row-reverse;
@@ -12,7 +12,7 @@
   margin: 0 auto;
 }
 
-.form > * + * {
+.form>*+* {
   display: flex;
   flex-direction: column;
   margin-top: 2rem;
@@ -24,7 +24,7 @@
   align-items: center;
   gap: 1rem;
   color: rgb(var(--on-accent-rgb));
-  background-color: rgb(var(--accent-rgb));
+  background-color: #62B681;
   border: none;
   border-radius: var(--border-radius);
   padding: 1rem;
@@ -102,7 +102,7 @@
   padding: 1rem;
 }
 
-.success > div {
+.success>div {
   display: flex;
   flex-direction: column;
   gap: .5rem;

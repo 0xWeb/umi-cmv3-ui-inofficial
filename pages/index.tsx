@@ -59,7 +59,7 @@ const useCandyMachine = (
         try {
           candyMachine = await fetchCandyMachine(umi, publicKey(candyMachineId));
           //verify CM Version
-          if (candyMachine.version != AccountVersion.V2){
+          if (candyMachine.version != AccountVersion.V2) {
             toast({
               id: "wrong-account-version",
               title: "Wrong candy machine account version!",
@@ -103,7 +103,7 @@ const useCandyMachine = (
           return;
         }
         setCandyGuard(candyGuard);
-        if (firstRun){
+        if (firstRun) {
           setfirstRun(false)
         }
       }
@@ -171,7 +171,7 @@ export default function Home() {
         return;
       }
       setFirstRun(false);
-      
+
       const { guardReturn, ownedTokens } = await guardChecker(
         umi, candyGuard, candyMachine, solanaTime
       );
@@ -203,7 +203,7 @@ export default function Home() {
         <style jsx global>
           {`
       body {
-          background: #2d3748; 
+          background: #62B681; 
        }
    `}
         </style>
@@ -211,14 +211,14 @@ export default function Home() {
           <CardHeader>
             <Flex minWidth='max-content' alignItems='center' gap='2'>
               <Box>
-                <Heading size='md'>{headerText}</Heading>
+                <Heading size='lg'>{headerText}</Heading>
               </Box>
               {loading ? (<></>) : (
                 <Flex justifyContent="flex-end" marginLeft="auto">
                   <Box background={"teal.100"} borderRadius={"5px"} minWidth={"50px"} minHeight={"50px"} p={2} >
                     <VStack >
                       <Text fontSize={"sm"}>Available NFTs:</Text>
-                      <Text fontWeight={"semibold"}>{Number(candyMachine?.data.itemsAvailable) - Number(candyMachine?.itemsRedeemed)}/{Number(candyMachine?.data.itemsAvailable)}</Text>
+                      <Text fontWeight={"semibold"}>{Number(candyMachine?.data.itemsAvailable) - Number(candyMachine?.itemsRedeemed)} / {Number(candyMachine?.data.itemsAvailable)}</Text>
                     </VStack>
                   </Box>
                 </Flex>

@@ -109,9 +109,9 @@ const mintClick = async (
   mintAmount: number,
   mintsCreated:
     | {
-        mint: PublicKey;
-        offChainMetadata: JsonMetadata | undefined;
-      }[]
+      mint: PublicKey;
+      offChainMetadata: JsonMetadata | undefined;
+    }[]
     | undefined,
   setMintsCreated: Dispatch<
     SetStateAction<
@@ -239,8 +239,7 @@ const mintClick = async (
         .sendTransaction(tx)
         .then((signature) => {
           console.log(
-            `Transaction ${index + 1} resolved with signature: ${
-              base58.deserialize(signature)[0]
+            `Transaction ${index + 1} resolved with signature: ${base58.deserialize(signature)[0]
             }`
           );
           amountSent = amountSent + 1;
@@ -271,7 +270,7 @@ const mintClick = async (
       status: "success",
       duration: 3000,
     });
-    
+
     const successfulMints = await verifyTx(umi, signatures);
 
     updateLoadingText(
@@ -306,8 +305,8 @@ const mintClick = async (
 
     // Update mintsCreated only if there are new mints
     if (newMintsCreated.length > 0) {
-        setMintsCreated(newMintsCreated);
-        onOpen();
+      setMintsCreated(newMintsCreated);
+      onOpen();
     }
   } catch (e) {
     console.error(`minting failed because of ${e}`);
@@ -436,11 +435,11 @@ type Props = {
   ownedTokens: DigitalAssetWithToken[] | undefined;
   setGuardList: Dispatch<SetStateAction<GuardReturn[]>>;
   mintsCreated:
-    | {
-        mint: PublicKey;
-        offChainMetadata: JsonMetadata | undefined;
-      }[]
-    | undefined;
+  | {
+    mint: PublicKey;
+    offChainMetadata: JsonMetadata | undefined;
+  }[]
+  | undefined;
   setMintsCreated: Dispatch<
     SetStateAction<
       | { mint: PublicKey; offChainMetadata: JsonMetadata | undefined }[]
@@ -524,7 +523,7 @@ export function ButtonList({
     <Box key={index} marginTop={"20px"}>
       <Divider my="10px" />
       <HStack>
-        <Heading size="xs" textTransform="uppercase">
+        <Heading size="md" textTransform="uppercase">
           {buttonGuard.header}
         </Heading>
         <Flex justifyContent="flex-end" marginLeft="auto">
@@ -603,7 +602,7 @@ export function ButtonList({
                 )
               }
               key={buttonGuard.label}
-              size="sm"
+              size="md"
               backgroundColor="teal.100"
               isDisabled={!buttonGuard.allowed}
               isLoading={
