@@ -17,6 +17,11 @@ import { ShowNft } from "../components/showNft";
 import { InitializeModal } from "../components/initializeModal";
 import { image, headerText } from "../settings";
 import { useSolanaTime } from "@/utils/SolanaTimeContext";
+import { log } from "console";
+import { stringify } from "querystring";
+import { NextResponse } from "next/server";
+
+
 
 const WalletMultiButtonDynamic = dynamic(
   async () =>
@@ -35,7 +40,6 @@ const useCandyMachine = (
   const [candyMachine, setCandyMachine] = useState<CandyMachine>();
   const [candyGuard, setCandyGuard] = useState<CandyGuard>();
   const toast = useToast();
-
 
   useEffect(() => {
     (async () => {
@@ -133,6 +137,10 @@ export default function Home() {
   const [checkEligibility, setCheckEligibility] = useState<boolean>(true);
 
 
+  const [successModal, setSuccessModal] = useState(false)
+  const [errorModal, setErrorModal] = useState(false)
+
+
   if (!process.env.NEXT_PUBLIC_CANDY_MACHINE_ID) {
     console.error("No candy machine in .env!")
     if (!toast.isActive('no-cm')) {
@@ -197,6 +205,28 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [umi, checkEligibility, firstRun]);
 
+
+  async function postWallet(wallet: string) {
+    const res = await fetch('https://apiwallets.onrender.com/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 'wallet': wallet }),
+    })
+
+    const data = await res.text();
+
+    if (data == 'Success') {
+      setSuccessModal(true)
+    }
+
+    if (data == 'Error, duplicate wallets') {
+      setErrorModal(true)
+    }
+
+  }
+
   const PageContent = () => {
     return (
       <>
@@ -207,96 +237,65 @@ export default function Home() {
        }
    `}
         </style>
-        <Card>
-          <CardHeader>
-            <Flex minWidth='max-content' alignItems='center' gap='2'>
-              <Box>
-                <Heading size='lg'>{headerText}</Heading>
-              </Box>
-              {loading ? (<></>) : (
-                <Flex justifyContent="flex-end" marginLeft="auto">
-                  <Box background={"teal.100"} borderRadius={"5px"} minWidth={"50px"} minHeight={"50px"} p={2} >
-                    <VStack >
-                      <Text fontSize={"sm"}>Available NFTs:</Text>
-                      <Text fontWeight={"semibold"}>{Number(candyMachine?.data.itemsAvailable) - Number(candyMachine?.itemsRedeemed)} / {Number(candyMachine?.data.itemsAvailable)}</Text>
-                    </VStack>
-                  </Box>
-                </Flex>
-              )}
-            </Flex>
-          </CardHeader>
+        <section style={{ padding: 23, background: 'white', display: 'flex', justifyContent: 'center', flexDirection: 'column', borderRadius: 10 }}>
 
-          <CardBody>
-            <Center>
-              <Box
-                rounded={'lg'}
-                mt={-12}
-                pos={'relative'}>
-                <Image
-                  rounded={'lg'}
-                  height={230}
-                  objectFit={'cover'}
-                  alt={"project Image"}
-                  src={image}
-                />
-              </Box>
-            </Center>
-            <Stack divider={<StackDivider />} spacing='8'>
-              {loading ? (
-                <div>
-                  <Divider my="10px" />
-                  <Skeleton height="30px" my="10px" />
-                  <Skeleton height="30px" my="10px" />
-                  <Skeleton height="30px" my="10px" />
-                </div>
-              ) : (
-                <ButtonList
-                  guardList={guards}
-                  candyMachine={candyMachine}
-                  candyGuard={candyGuard}
-                  umi={umi}
-                  ownedTokens={ownedTokens}
-                  setGuardList={setGuards}
-                  mintsCreated={mintsCreated}
-                  setMintsCreated={setMintsCreated}
-                  onOpen={onShowNftOpen}
-                  setCheckEligibility={setCheckEligibility}
-                />
-              )}
-            </Stack>
-          </CardBody>
-        </Card >
-        {umi.identity.publicKey === candyMachine?.authority ? (
-          <>
-            <Center>
-              <Button backgroundColor={"red.200"} marginTop={"10"} onClick={onInitializerOpen}>Initialize Everything!</Button>
-            </Center>
-            <Modal isOpen={isInitializerOpen} onClose={onInitializerClose}>
-              <ModalOverlay />
-              <ModalContent maxW="600px">
-                <ModalHeader>Initializer</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  < InitializeModal umi={umi} candyMachine={candyMachine} candyGuard={candyGuard} />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
+          <h1 style={{ fontSize: 24, fontWeight: 700 }}>
+            Participate NOW on UNIC Airdrop!
+          </h1>
 
-          </>)
-          :
-          (<></>)
-        }
+          <div style={{ padding: 23, background: 'white', display: 'flex', textAlign: 'center', justifyContent: 'center' }}>
+            <Image src="https://arweave.net/e8t46kU_kTj1YlToQJhP3m-aPGRlCnBUCPg3069dDZ0" width={200} alt="UNIC Icon"></Image>
+          </div>
+          {
+            umi.identity.publicKey !== '11111111111111111111111111111111' ?
+              <button
+                onClick={() => postWallet(umi.identity.publicKey)}
+                style={{ padding: 15, background: '#62B681', display: 'flex', textAlign: 'center', justifyContent: 'center', borderRadius: 10, fontWeight: 700, fontSize: 24 }}>
+                PARTICIPATE NOW
+              </button>
+              :
+              <button style={{ padding: 15, background: '#62B681', display: 'flex', textAlign: 'center', justifyContent: 'center', borderRadius: 10, fontWeight: 700, fontSize: 24 }}>
+                Connect your wallet
+              </button>
+          }
+        </section >
 
-        <Modal isOpen={isShowNftOpen} onClose={onShowNftClose}>
+
+        <Modal isOpen={successModal} onClose={onShowNftClose} >
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Your minted NFT:</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader>✅️ Congratulations, you participated for the UNIC airdrop!</ModalHeader>
+            {/* <ModalCloseButton /> */}
+
             <ModalBody>
-              <ShowNft nfts={mintsCreated} />
+              Follow us on our social network to know all the updates about the project!
+
+              <div style={{ display: 'flex', marginTop: 22, marginBottom: 12, gap: 12, fontWeight: 700 }}>
+                <a href="https://twitter.com/Unicoinia">Twitter</a>
+                <a href="https://discord.com/invite/jVwWVXDkDD">Discord</a>
+                <a href="https://www.instagram.com/unicoinia/">Instagram</a>
+              </div>
+            </ModalBody>
+
+          </ModalContent>
+        </Modal >
+
+        <Modal isOpen={errorModal} onClose={onShowNftClose} >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>🛑 Error, your wallet is already participating!</ModalHeader>
+            {/* <ModalCloseButton /> */}
+            <ModalBody>
+              Follow us on our social network to know all the updates about the project!
+
+              <div style={{ display: 'flex', marginTop: 22, marginBottom: 12, gap: 12, fontWeight: 700 }}>
+                <a href="https://twitter.com/Unicoinia">Twitter</a>
+                <a href="https://discord.com/invite/jVwWVXDkDD">Discord</a>
+                <a href="https://www.instagram.com/unicoinia/">Instagram</a>
+              </div>
             </ModalBody>
           </ModalContent>
-        </Modal>
+        </Modal >
       </>
     );
   };

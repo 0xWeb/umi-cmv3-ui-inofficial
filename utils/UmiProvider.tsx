@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { UmiContext } from "./useUmi";
 import { mplCandyMachine } from "@metaplex-foundation/mpl-candy-machine";
 import { createNoopSigner, publicKey, signerIdentity } from "@metaplex-foundation/umi";
+import { log } from "console";
 
 export const UmiProvider = ({
   endpoint,
@@ -16,13 +17,15 @@ export const UmiProvider = ({
 }) => {
   const wallet = useWallet();
   const umi = createUmi(endpoint)
-  .use(mplTokenMetadata())
-  .use(mplCandyMachine())
+    .use(mplTokenMetadata())
+    .use(mplCandyMachine())
   if (wallet.publicKey === null) {
     const noopSigner = createNoopSigner(publicKey("11111111111111111111111111111111"))
     umi.use(signerIdentity(noopSigner));
   } else {
     umi.use(walletAdapterIdentity(wallet))
+    console.log("This is your wallet", umi.identity.publicKey);
+
   }
 
   return <UmiContext.Provider value={{ umi }}>{children}</UmiContext.Provider>;
